@@ -1,0 +1,31 @@
+version: '3.3'
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6380"
+  
+  web_server:
+    volumes:
+      - ./web_server:/app
+    build: ./web_server
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+  
+  tcp_server:
+    build: ./tcp_server
+    volumes:
+      - ./tcp_server:/app
+    ports:
+      - "65432:65432"
+    depends_on:
+      - redis
+  
+  generic_device:
+    build: ./generic_device
+    volumes:
+      - ./generic_device:/app
+    depends_on:
+      - tcp_server
